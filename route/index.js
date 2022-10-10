@@ -5,7 +5,7 @@ const router = express.Router();
 const db = require('./db.js');
 const s3 = require('./s3.js');
 const caver = require('./caver_back.js');
-
+const { BigNumber } = require('ethers');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
 
@@ -173,7 +173,7 @@ router.post('/createProject', upload2().fields([{ name: 'img' }, { name: 'symbol
 
         let all_ = 0;
         for (let i = 0; i < roadmap.length; i++) {
-            all_ = all_ + roadmap[i].expense;
+            all_ = all_ + Number(roadmap[i].expense);
         }
 
         const result = await db.query(
@@ -231,6 +231,18 @@ router.post('/sponse', async (req, res) => {
         const result = await db.query(
             `INSERT INTO project_sponse(project_id, sponsor, amount) VALUES(?,?,?)`,
             [id, sponsor, amount]
+        )
+
+        const [row0, field0] = await db.query(
+            `SELECT funding FROM project WHERE id=?`,
+            [id]
+        )
+
+        const _fun = (BigNumber.from(row0[0].funding).add(BigNumber.from(amount))).toString();
+
+        const result_ = await db.query(
+            `UPDATE project set funding=? WHERE id=?`,
+            [_fun, id]
         )
 
         const newData = {
