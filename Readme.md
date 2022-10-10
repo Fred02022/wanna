@@ -44,4 +44,4 @@ We are planning to update three additional features in the future.
 
 ### Link
 
-[https://wannas.com](https://wannas.com/)
+[https://wannas.xyz](https://wannas.xyz/)
